@@ -14,5 +14,6 @@ Imports: htmlwidgets,
     js
 Suggests: shiny,
     knitr,
-    rmarkdown
+    rmarkdown,
+    d3r
 VignetteBuilder: knitr

@@ -26,12 +26,12 @@
 #' # Trivial example: creates an h1 div. passes the data multiplied by 2 to that div.
 #' flexwidget(data = 2,
 #'   js_code = "function(data){document.getElementById('mydiv').textContent = data * 2}",
-#'   inner_html = tags$h1(id = "mydiv"))
+#'   inner_html = htmltools::tags$h1(id = "mydiv"))
 #'
 #' # Resize example
 #' flexwidget(
 #'   resize = "function(width, height){document.getElementById('mydiv').textContent = width}",
-#'   inner_html = tags$h1("Resize this window to get width", id = "mydiv"))
+#'   inner_html = htmltools::tags$h1("Resize this window to get width", id = "mydiv"))
 #'
 #' # For more exciting examples see vignette.
 #'
