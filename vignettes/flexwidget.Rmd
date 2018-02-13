@@ -1,0 +1,91 @@
+---
+title: "flexwidget"
+author: "Alicia Schep"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_document
+vignette: >
+  %\VignetteIndexEntry{flexwidget}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  fig.width = 5, 
+  fig.height = 5
+)
+```
+
+```{r}
+library(flexwidget)
+```
+
+```{r}
+js_snippet <-
+'
+function(data){// Make the visualization
+var svg = dimple.newSvg("#vis", "100%", "100%");
+widget = new dimple.chart(svg, HTMLWidgets.dataframeToD3(data));
+widget.setMargins("60px", "30px", "110px", "70px");
+widget.addMeasureAxis("x", "Sepal.Length");
+widget.addMeasureAxis("y", "Petal.Width");
+widget.addSeries(["Sepal.Length","Sepal.Width","Species"], dimple.plot.bubble);
+widget.draw();
+}
+'
+
+```
+
+```{r}
+resize_snippet <-
+'
+function(width, height) {
+  widget.draw(0,true);
+}
+'
+
+html_snippet <-
+  htmltools::tagList(
+    htmltools::tags$script(src = "http://dimplejs.org/dist/dimple.v2.3.0.min.js"),
+    htmltools::tags$div(id = "vis")
+  )
+
+
+deps <- list(
+  # Use the d3 library provided by d3r
+  d3r::d3_dep_v4(), 
+  # Use the dimple library included in this package
+  htmltools::htmlDependency(
+    "dimple",
+    version = "2.3.0",
+    src =system.file("dimple",package = "flexwidget"),
+    script = "dimple.v2.3.0.min.js"
+  ))
+```
+
+```{r}
+flexwidget(data = iris,
+           js_code = js_snippet,
+           inner_html = html_snippet,
+           resize = resize_snippet,
+           dependencies = deps)
+```
+
+
+### Note on dependencies
+
+For interactive use, you can specify an HTML dependency from a CDN:
+
+```{r}
+ dimple_dep <- 
+  htmltools::htmlDependency(
+    name="dimple",
+    version = "2.3.0",
+    src = c(href = "http://dimplejs.org/dist/"),
+    script = "dimple.v2.3.0.min.js"
+  )
+```
+
+However, this will not work in R Markdown. In R Markdown, you have to specify a path to a local file.
+
+
