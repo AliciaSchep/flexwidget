@@ -15,6 +15,6 @@ flexwidget(data = 2,
   height = "50px")
 ```
 
-#4 <!-- since this is md, widget does not actually get made ... -->
+# 4 <!-- since this is md, widget does not actually get made ... -->
 
 See vignette for visualization example.
