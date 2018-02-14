@@ -28,3 +28,10 @@ is useful if you want to save an expression in a variable.}
 Output and render functions for using flexwidget within Shiny
 applications and interactive Rmd documents.
 }
+\details{
+If using CDN for dependencies, you can add `flexwidget_src` call
+into the UI. If accepting input that affects the javascript being passed to the
+widget, use caution as a user could inject something malicious. It is
+probably best to only have the data input to the widget change from user
+input.
+}

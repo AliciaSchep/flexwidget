@@ -5,21 +5,21 @@
 \title{Empty Widget for Custom Javascript}
 \usage{
 flexwidget(data = NULL, js_code = NULL, inner_html = NULL,
-  resize = NULL, width = NULL, height = NULL, elementId = NULL,
+  resize = NULL, width = "100\%", height = "100\%", elementId = NULL,
   dependencies = NULL)
 }
 \arguments{
 \item{data}{data to pass to the js_code}
 
 \item{js_code}{javascript code, should be a function that takes in single
-argument (the data)}
+argument, the data}
 
 \item{inner_html}{html to insert into the widget div}
 
 \item{resize}{javascript code for resizing, should be a function that takes
 in width and height argument.}
 
-\item{width}{width of widget, optional}
+\item{width}{width of widget, optional. Default is 100 percent}
 
 \item{height}{height of widget, optional}
 
@@ -41,13 +41,14 @@ custom javascript and html. See the vignette and examples for an illustration.
 # Trivial example: creates an h1 div. passes the data multiplied by 2 to that div.
 flexwidget(data = 2,
   js_code = "function(data){document.getElementById('mydiv').textContent = data * 2}",
-  inner_html = htmltools::tags$h1(id = "mydiv"))
+  inner_html = htmltools::tags$h1(id = "mydiv"), height = "50px")
 
 # Resize example
 flexwidget(
   resize = "function(width, height){document.getElementById('mydiv').textContent = width}",
-  inner_html = htmltools::tags$h1("Resize this window to get width", id = "mydiv"))
+  inner_html = htmltools::tags$h1("Resize this window to get width", id = "mydiv2"),
+  height = "50px")
 
-# For more exciting examples see vignette.
+# For a plot example see vignette.
 
 }

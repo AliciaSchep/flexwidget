@@ -7,11 +7,11 @@
 #'
 #' @param data data to pass to the js_code
 #' @param js_code javascript code, should be a function that takes in single
-#' argument (the data)
+#' argument, the data
 #' @param inner_html html to insert into the widget div
 #' @param resize javascript code for resizing, should be a function that takes
 #' in width and height argument.
-#' @param width width of widget, optional
+#' @param width width of widget, optional. Default is 100 percent
 #' @param height height of widget, optional
 #' @param elementId id for widget, optional
 #' @param dependencies javascript dependencies, should be list of html_dependency
@@ -26,21 +26,22 @@
 #' # Trivial example: creates an h1 div. passes the data multiplied by 2 to that div.
 #' flexwidget(data = 2,
 #'   js_code = "function(data){document.getElementById('mydiv').textContent = data * 2}",
-#'   inner_html = htmltools::tags$h1(id = "mydiv"))
+#'   inner_html = htmltools::tags$h1(id = "mydiv"), height = "50px")
 #'
 #' # Resize example
 #' flexwidget(
 #'   resize = "function(width, height){document.getElementById('mydiv').textContent = width}",
-#'   inner_html = htmltools::tags$h1("Resize this window to get width", id = "mydiv"))
+#'   inner_html = htmltools::tags$h1("Resize this window to get width", id = "mydiv2"),
+#'   height = "50px")
 #'
-#' # For more exciting examples see vignette.
+#' # For a plot example see vignette.
 #'
 flexwidget <- function(data = NULL,
                      js_code = NULL,
                      inner_html = NULL,
                      resize = NULL,
-                     width = NULL,
-                     height = NULL,
+                     width = "100%",
+                     height = "100%",
                      elementId = NULL,
                      dependencies = NULL) {
   x <- list()
@@ -84,6 +85,12 @@ flexwidget <- function(data = NULL,
 #' @param env The environment in which to evaluate \code{expr}.
 #' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
 #'   is useful if you want to save an expression in a variable.
+#'
+#' @details If using CDN for dependencies, you can add `flexwidget_src` call
+#' into the UI. If accepting input that affects the javascript being passed to the
+#' widget, use caution as a user could inject something malicious. It is
+#' probably best to only have the data input to the widget change from user
+#' input.
 #'
 #' @name flexwidget-shiny
 #'

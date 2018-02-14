@@ -2,5 +2,7 @@
 
 export(flexwidget)
 export(flexwidgetOutput)
+export(flexwidget_css)
+export(flexwidget_src)
 export(renderflexwidget)
 import(htmlwidgets)

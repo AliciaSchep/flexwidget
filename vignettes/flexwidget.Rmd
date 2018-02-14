@@ -16,9 +16,85 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Custom javascript in R
+
+The goal of the flexwidget package is to make it easy to make visualizations in R with custom javascript code. A flexwidget is just a very simple htmlwidget, that takes in as input some data as well as the javascript to act on that data. As opposed to simply wrapping the javascript in tags from htmltools, using a flexwidget enables you to take advantage of functionality from the htmlwidgets package, such as the saveWidget function and sizing and knitr printing help.     
+
 ```{r}
 library(flexwidget)
 ```
+
+## Very basic example
+
+As a very basic taste, here is a widget that takes the input data, multiplies it by two, and puts the result in a h1 tag:
+
+```{r}
+flexwidget(data = 2,
+  js_code = "function(data){document.getElementById('mydiv').textContent = data * 2}",
+  inner_html = htmltools::tags$h1(id = "mydiv"),
+  height = "50px")
+```
+
+The javascript code passed to the `js_code` argument should be formatted as a function that takes a single argument -- the data that is passed to the `data` argument to `flexwidget`. The htmltools package can help for making the html that gets inserted into the main widget div.
+
+## With resizing
+
+We can pass some javascript to resize the widget
+
+```{r}
+flexwidget(
+  resize = "function(width, height){document.getElementById('mydiv2').textContent = width}",
+  inner_html = htmltools::tags$h1("Resize this window to get width", id = "mydiv2"),
+  height = "50px")
+```
+
+If you adjust the size of the window, the initial text should get replaced with the width of the window in pixels.
+
+## More involved example
+
+I'll now make a scatterplot using the dimple.js library[^1].
+
+### Dependencies
+
+For the next example, we are going to call the d3 and dimple libraries.
+
+Dependencies can be specified two ways. One is to pass a list of `html_dependency` objects created by `htmltools::htmlDependency` to the `dependencies` argument. For interactive use (not knitr), those can call CDNs:
+
+```{r}
+cdn_deps <- list(
+  htmltools::htmlDependency(
+    name="d3",
+    version = "4",
+    src = c(href = "https://d3js.org/"),
+    script = "d3.v4.min.js"
+  ),
+  htmltools::htmlDependency(
+    name="dimple",
+    version = "2.3.0",
+    src = c(href = "http://dimplejs.org/dist/"),
+    script = "dimple.v2.3.0.min.js"
+  )
+)
+```
+
+However, this will not work when passed into an htmlwidget as pandoc requires local dependencies. Thus you can replace the src arguments with a path to a local file.  For d3, the d3r package includes a function to call the d3 dependency stored in that package.  
+
+Another way of making sure the dependencies are available is to create a tagList with script tags calling the libraries. The `flexwidget_src` and `flexwidget_css` functions are helpers to create those lists for javascript and css urls, respectively.  
+
+```{r}
+cdn_tags <- flexwidget_src(
+  "https://d3js.org/d3.v4.min.js",
+  "http://dimplejs.org/dist/dimple.v2.3.0.min.js")
+
+cdn_tags
+```
+
+For R markdown, it is sufficient to print the result once in the document prior to making your widget. For interactive use or making a widget to save, you can use the `prependContent` function from the htmlwidgets package.    
+
+
+### A dimple scatter plot
+
+Using the following javascript snippets:
 
 ```{r}
 js_snippet <-
@@ -34,58 +110,32 @@ widget.draw();
 }
 '
 
-```
-
-```{r}
 resize_snippet <-
 '
 function(width, height) {
   widget.draw(0,true);
 }
 '
-
-html_snippet <-
-  htmltools::tagList(
-    htmltools::tags$script(src = "http://dimplejs.org/dist/dimple.v2.3.0.min.js"),
-    htmltools::tags$div(id = "vis")
-  )
-
-
-deps <- list(
-  # Use the d3 library provided by d3r
-  d3r::d3_dep_v4(), 
-  # Use the dimple library included in this package
-  htmltools::htmlDependency(
-    "dimple",
-    version = "2.3.0",
-    src =system.file("dimple",package = "flexwidget"),
-    script = "dimple.v2.3.0.min.js"
-  ))
 ```
+
+As well as this bit of html:
+
+```{r}
+html_snippet <- htmltools::tags$div(id = "vis")
+```
+
+We can pass javascript and the html to flexwidget:
 
 ```{r}
 flexwidget(data = iris,
            js_code = js_snippet,
            inner_html = html_snippet,
-           resize = resize_snippet,
-           dependencies = deps)
+           resize = resize_snippet)
 ```
 
 
-### Note on dependencies
+## Shiny
 
-For interactive use, you can specify an HTML dependency from a CDN:
+The package includes shiny bindings, `flexwidgetOutput` and `renderflexwidget`. If using CDN for dependencies, you can add `flexwidget_src` call into the UI. If accepting input that affects the javascript being passed to the widget, use caution as a user could inject something malicious. It is probably best to only have the data input to the widget change from user input.  
 
-```{r}
- dimple_dep <- 
-  htmltools::htmlDependency(
-    name="dimple",
-    version = "2.3.0",
-    src = c(href = "http://dimplejs.org/dist/"),
-    script = "dimple.v2.3.0.min.js"
-  )
-```
-
-However, this will not work in R Markdown. In R Markdown, you have to specify a path to a local file.
-
-
+[^1]: Note that this is still a pretty simple example, where it would probably make more sense to use an existing htmlwigets library, such as the [dimple](https://bart6114.github.io/dimple/) R package. Plotly, ggiraph, scatterD3, or vegalite might be other good R package options.
