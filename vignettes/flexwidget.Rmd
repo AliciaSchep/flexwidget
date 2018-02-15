@@ -89,7 +89,7 @@ cdn_tags <- flexwidget_src(
 cdn_tags
 ```
 
-For R markdown, it is sufficient to print the result once in the document prior to making your widget. For interactive use or making a widget to save, you can use the `prependContent` function from the htmlwidgets package.    
+For R markdown, it is sufficient to print the result once in the document prior to making your widget. For interactive use or making a widget to save, you can use the `prependContent` function from the htmlwidgets package to prepend the result from `flexwidget_src` to the widget object.    
 
 
 ### A dimple scatter plot
@@ -118,7 +118,9 @@ function(width, height) {
 '
 ```
 
-As well as this bit of html:
+Note that both javascript functions use a variable called 'widget'. This is a variable that is defined within the htmlwidget that can be accessed from either function.  
+
+We'll also use a small snippet of html:
 
 ```{r}
 html_snippet <- htmltools::tags$div(id = "vis")
@@ -138,4 +140,4 @@ flexwidget(data = iris,
 
 The package includes shiny bindings, `flexwidgetOutput` and `renderflexwidget`. If using CDN for dependencies, you can add `flexwidget_src` call into the UI. If accepting input that affects the javascript being passed to the widget, use caution as a user could inject something malicious. It is probably best to only have the data input to the widget change from user input.  
 
-[^1]: Note that this is still a pretty simple example, where it would probably make more sense to use an existing htmlwigets library, such as the [dimple](https://bart6114.github.io/dimple/) R package. Plotly, ggiraph, scatterD3, or vegalite might be other good R package options.
+[^1]: Note that this is still a pretty simple example, where it would probably make more sense to use an existing htmlwigets library, such as the [dimple](https://bart6114.github.io/dimple/) R package. Plotly, ggiraph, scatterD3, or vegalite might be other good R package options for an interactive scatterplot.
