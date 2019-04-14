@@ -1,6 +1,9 @@
-# (uncomment to add a dependency)
 dependencies:
   - name: he
     version: 1.1.1
     src: htmlwidgets/lib/he
     script: he.js
+  - name: flexwidget
+    version: 0.0.0
+    src: htmlwidgets/lib/flexwidget
+    stylesheet: flexwidget.css
